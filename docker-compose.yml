@@ -18,6 +18,7 @@ services:
   tswow:
     container_name: tswow
     build: .
+    user: "${UID}:${GID}"
     depends_on:
       mysql:
         condition: service_started
@@ -25,5 +26,6 @@ services:
       - .env
     volumes:
       - ./tswow-root:/tswow-root
+      - ./tswow-root/tmp:/tmp
     networks:
       - tswow-net
