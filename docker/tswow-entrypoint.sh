@@ -19,5 +19,6 @@ else
 fi
 
 cd /tswow-root/tswow-install
+# TODO: remplacer ce sleep de golmon par un truc qui attend que la db soit up
 sleep 10
 npm run start
