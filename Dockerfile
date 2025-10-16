@@ -48,7 +48,8 @@ ENV PATH="$NVM_DIR/versions/node/v20.18.0/bin:$PATH"
 RUN mkdir -p /tswow-root/source
 
 COPY docker/tswow-entrypoint.sh /usr/local/bin/tswow-entrypoint.sh
-RUN chmod +x /usr/local/bin/tswow-entrypoint.sh
+COPY docker/tswow-build.sh /docker/tswow-build.sh
+RUN chmod +x /usr/local/bin/tswow-entrypoint.sh /docker/tswow-build.sh
 
 WORKDIR /tswow-root
 
