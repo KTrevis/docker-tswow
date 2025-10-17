@@ -39,8 +39,8 @@ if [ -f "$SQL_FILE" ]; then
 
   MYSQL_CMD=(mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}")
 
-  DB_SOURCE_RAW="default@002edataset@002eworld@002esource"
-  DB_DEST_RAW="default@002edataset@002eworld@002edest"
+  DB_SOURCE_RAW="default.dataset.world.source"
+  DB_DEST_RAW="default.dataset.world.dest"
 
   # Check if schemas already exist
   SOURCE_EXISTS=$("${MYSQL_CMD[@]}" -N -s -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='${DB_SOURCE_RAW}'")
