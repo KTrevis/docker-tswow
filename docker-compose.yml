@@ -27,5 +27,8 @@ services:
     volumes:
       - ./tswow-root:/tswow-root
       - ./tswow-root/tmp:/tmp
+    ports:
+      - "3724:3724" # authserver (logon)
+      - "8085:8085" # worldserver (game)
     networks:
       - tswow-net
