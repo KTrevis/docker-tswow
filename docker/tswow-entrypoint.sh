@@ -6,7 +6,7 @@ export NVM_DIR="/root/.nvm"
 
 git config --global safe.directory '*'
 
-if [ ! -d "/tswow-root/tswow-source/.git" ]; then
+if [ ! -d "/tswow-root/tswow-source" ]; then
   echo "Cloning TSWoW sources..."
   git clone https://github.com/tswow/tswow.git --recurse /tswow-root/tswow-source
 fi

@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     clang \
     cmake \
+    default-mysql-client \
     libmysqlclient-dev \
     libssl-dev \
     libbz2-dev \
