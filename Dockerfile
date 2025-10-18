@@ -1,8 +1,11 @@
 FROM ubuntu:22.04
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=Etc/UTC \
-    NVM_DIR=/root/.nvm
+    NVM_DIR=/opt/nvm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -46,7 +49,12 @@ RUN mkdir -p "$NVM_DIR" \
 
 ENV PATH="$NVM_DIR/versions/node/v20.18.0/bin:$PATH"
 
-RUN mkdir -p /tswow-root/source
+RUN groupadd -g ${GROUP_ID} tswow && \
+    useradd -l -u ${USER_ID} -g tswow -m -s /bin/bash tswow && \
+    echo "tswow ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN mkdir -p /tswow-root /docker && \
+    chown -R tswow:tswow /tswow-root /opt/nvm /docker
 
 COPY docker/tswow-entrypoint.sh /usr/local/bin/tswow-entrypoint.sh
 COPY docker/tswow-build.sh /docker/tswow-build.sh

@@ -17,8 +17,12 @@ services:
 
   tswow:
     container_name: tswow
-    build: .
-    user: "${UID}:${GID}"
+    build:
+      context: .
+      args:
+        USER_ID: "${UID:-1000}"
+        GROUP_ID: "${GID:-1000}"
+    user: "${UID:-1000}:${GID:-1000}"
     tty: true
     stdin_open: true
     depends_on:
