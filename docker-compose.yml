@@ -3,6 +3,14 @@ networks:
     driver: bridge
 
 services:
+  website:
+    container_name: tswow-website
+    build: ./website
+    ports:
+      - "8080:8080"
+    networks:
+      - tswow-net
+
   mysql:
     container_name: mysql-tswow
     image: mysql:8.0
