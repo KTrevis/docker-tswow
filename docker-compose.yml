@@ -40,5 +40,6 @@ services:
     ports:
       - "3724:3724" # authserver (logon)
       - "8085:8085" # worldserver (game)
+      - "7878:7878" # SOAP
     networks:
       - tswow-net
