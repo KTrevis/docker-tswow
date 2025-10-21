@@ -1,25 +1,14 @@
 package api
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/tiaguinho/gosoap"
 )
-
-type roundTripperWithAuth struct {
-	underlying http.RoundTripper
-	authHeader string
-}
-
-func (r roundTripperWithAuth) RoundTrip(req *http.Request) (*http.Response, error) {
-	req2 := req.Clone(req.Context())
-	req2.Header.Set("Authorization", r.authHeader)
-	return r.underlying.RoundTrip(req2)
-}
 
 func getEnv(key, def string) string {
 	if v := os.Getenv(key); v != "" {
@@ -49,24 +38,34 @@ func callSOAPAccountCreate(usernameUpper, password, email string) error {
 	// TrinityCore SOAP endpoint
 	url := fmt.Sprintf("http://%s:%s/", host, port)
 
-	// Create SOAP client with timeout
-	httpClient := &http.Client{Timeout: 10 * time.Second}
-	soapClient, err := gosoap.SoapClient(url, httpClient)
+	command := fmt.Sprintf("account create %s %s %s", usernameUpper, password, email)
+	envelope := fmt.Sprintf(`<?xml version="1.0" encoding="utf-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SOAP-ENV:Body>
+    <ns1:executeCommand xmlns:ns1="urn:TC">
+      <command>%s</command>
+    </ns1:executeCommand>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>`, command)
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBufferString(envelope))
 	if err != nil {
 		return err
 	}
-	// Add Basic Auth header via client transport RoundTripper
+	req.Header.Set("Content-Type", "text/xml; charset=utf-8")
+	// Basic auth header
 	auth := base64.StdEncoding.EncodeToString([]byte(user + ":" + pass))
-	// gosoap.Client exposes HttpClient; attach header via Transport wrapper
-	soapClient.HTTPClient.Transport = roundTripperWithAuth{underlying: http.DefaultTransport, authHeader: "Basic " + auth}
+	req.Header.Set("Authorization", "Basic "+auth)
 
-	// TrinityCore method and params
-	params := gosoap.Params{
-		"command": fmt.Sprintf("account create %s %s %s", usernameUpper, password, email),
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
 	}
-
-	// Note: TrinityCore uses namespace urn:TC with method executeCommand
-	// gosoap will build the envelope; we rely on server accepting basic form
-	_, err = soapClient.Call("executeCommand", params)
-	return err
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("soap error: status %d: %s", resp.StatusCode, string(body))
+	}
+	return nil
 }

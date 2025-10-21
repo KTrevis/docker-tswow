@@ -4,6 +4,9 @@ networks:
 
 services:
   website:
+    depends_on:
+      mysql:
+        condition: service_started
     container_name: tswow-website
     build: ./website
     ports:
