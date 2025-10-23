@@ -30,7 +30,7 @@ Once the container has created the directory structure:
    - Example: if your client is at `tswow-root/client`, set the path to `../client` in `node.conf`.
 4. Restart the container:
    ```bash
-   docker compose restart tswow
+   docker compose restart
    ```
 
 Once the correct client path is set, the container should start successfully and build the server.
