@@ -24,6 +24,10 @@ func main() {
 		c.String(http.StatusOK, "Hello, world!")
 	})
 
+	r.GET("/register", func(c *gin.Context) {
+		c.File("static/register.html")
+	})
+
 	apiGroup := r.Group("/api")
 	api.RegisterRoutes(apiGroup, database)
 
