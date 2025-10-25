@@ -64,7 +64,7 @@
         if (!res.ok) {
           throw new Error(data.error || ('HTTP ' + res.status));
         }
-        msg.textContent = 'Account created for ' + (data.username || payload.username) + ' (ID ' + (data.id || '?') + ')';
+        msg.textContent = `Account created for ${data.username}`;
         msg.className = 'msg ok';
         msg.style.display = 'block';
         form.reset();

@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 
@@ -20,9 +19,6 @@ func main() {
 	}
 
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello, world!")
-	})
 
 	r.GET("/register", func(c *gin.Context) {
 		c.File("static/register.html")
